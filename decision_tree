@@ -1,0 +1,10 @@
+digraph {
+	A [label=A]
+	B [label=B]
+	AND [label="A AND B"]
+	A -> AND [label="A=1"]
+	B -> AND [label="B=1"]
+	OR [label="A OR B"]
+	A -> OR [label="A=1"]
+	B -> OR [label="B=1"]
+}

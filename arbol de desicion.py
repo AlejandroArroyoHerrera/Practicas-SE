@@ -1,19 +1,8 @@
 import pandas as pd
 from graphviz import Digraph
 
-# Definimos la tabla de verdad para las operaciones AND y OR
-data = {
-    'A': [0, 0, 1, 1],
-    'B': [0, 1, 0, 1],
-    'A AND B': [0, 0, 0, 1],
-    'A OR B': [0, 1, 1, 1]
-}
-
-# Convertimos la tabla de verdad a un DataFrame
-truth_table = pd.DataFrame(data)
-
 # Función para construir un árbol de decisión
-def build_decision_tree(data):
+def build_decision_tree():
     dot = Digraph()
 
     # Agregamos nodos y bordes al grafo
@@ -32,9 +21,36 @@ def build_decision_tree(data):
 
     return dot
 
-# Generamos el árbol de decisión
-decision_tree = build_decision_tree(truth_table)
+def main():
+    # Solicitar la entrada de A y B
+    a = int(input("Ingrese el valor de A (0 o 1): "))
+    b = int(input("Ingrese el valor de B (0 o 1): "))
 
-# Guardamos y mostramos el grafo
-decision_tree.render('decision_tree', format='png', cleanup=True)
-decision_tree.view()
+    # Validar la entrada
+    if a not in (0, 1) or b not in (0, 1):
+        print("Por favor, ingrese 0 o 1.")
+        return
+
+    # Crear la tabla de verdad
+    data = {
+        'A': [0, 0, 1, 1],
+        'B': [0, 1, 0, 1],
+        'A AND B': [(x & y) for x, y in zip([0, 0, 1, 1], [0, 1, 0, 1])],
+        'A OR B': [(x | y) for x, y in zip([0, 0, 1, 1], [0, 1, 0, 1])]
+    }
+
+    truth_table = pd.DataFrame(data)
+
+    # Mostrar la tabla de verdad
+    print("\nTabla de Verdad:")
+    print(truth_table)
+
+    # Generar el árbol de decisión
+    decision_tree = build_decision_tree()
+
+    # Guardar y mostrar el grafo
+    decision_tree.render('decision_tree', format='png', cleanup=True)
+    decision_tree.view()
+
+if __name__ == "__main__":
+    main()

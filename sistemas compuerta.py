@@ -30,14 +30,14 @@ def procesar_texto(texto):
                 variable_index += 1
 
     # Construir la fórmula lógica
-    expresion = ""
+    expres = ""
     variable_index = 0
     for parte in partes:
         if parte in operador:
             if parte == "y":
-                expresi += " ^ "
+                expres += " ^ "
             elif parte == "o":
-                expresi += " v "
+                expres += " v "
         else:
             if parte.strip():
                 variable = string.ascii_lowercase[variable_index]
