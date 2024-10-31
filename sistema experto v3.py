@@ -50,7 +50,7 @@ def procesar_oracion(oracion):
         letra = chr(65 + i)  # Asignar letras A, B, C, etc.
         
         if negacion:
-            oraciones[letra] = f"¬{frase}"  # Notación lógica
+            oraciones[letra] = f"{frase}"  # Notación lógica
         else:
             oraciones[letra] = frase
     
