@@ -13,7 +13,7 @@ def procesar_expresiones():
     
     # Mostrar las proposiciones y la expresión lógica en la terminal
     print("\nProposiciones:")
-    for letra, frase in oraciones.items():
+    for letra, frase in sorted(oraciones.items()):
         print(f"{letra}: {frase}")
     print("\nFórmula combinada:", expresion_comb)
     print("Generando tablas e imágenes...")
@@ -36,26 +36,26 @@ def procesar_oracion(oracion):
     partes_y = oracion.split(' y ')
     for parte in partes_y:
         sub_partes = parte.split(' o ')
-        proposiciones.extend(sub_partes)
+        for sub in sub_partes:
+            sub = sub.strip()
+            if sub and sub not in proposiciones:  # Añadir solo si no está duplicado
+                proposiciones.append(sub)
     
-    # Eliminar espacios en blanco y duplicados
-    proposiciones = list(set(p.strip() for p in proposiciones if p.strip()))
-
     # Crear un diccionario para las oraciones y sus negaciones
     oraciones = {}
     for i, p in enumerate(proposiciones):
         # Verificar si hay una negación
         negacion = 'no' in p
-        frase = p.replace("no", "no").strip()  # Eliminar "no" para la proposición
+        frase = p.replace("no", "").strip()  # Eliminar "no" para la proposición
         letra = chr(65 + i)  # Asignar letras A, B, C, etc.
         
         if negacion:
-            oraciones[letra] = f"{frase}"  # Notación lógica
+            oraciones[letra] = f"¬{frase}"  # Notación lógica
         else:
             oraciones[letra] = frase
     
     # Crear la expresión lógica combinada
-    expresion_comb = sp.Or(*[sp.symbols(chr(65 + i)) for i in range(len(proposiciones))])
+    expresion_comb = sp.Or(*[sp.symbols(chr(65 + i)) for i in range(len(oraciones))])
     
     return oraciones, expresion_comb
 
@@ -121,3 +121,4 @@ def generar_arbol(oraciones, combinaciones, resultados):
 
 # Ejemplo de uso
 procesar_expresiones()
+
