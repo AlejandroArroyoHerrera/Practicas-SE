@@ -5,22 +5,17 @@ from graphviz import Digraph
 import sympy as sp
 
 def procesar_expresiones():
-    # Solicitar el número de proposiciones al usuario
-    num_proposiciones = int(input("Ingrese el número de proposiciones: "))
-    oraciones = {}
-
-    # Ingresar las proposiciones
-    for i in range(num_proposiciones):
-        letra = chr(65 + i)  # Genera letras A, B, C, D, etc.
-        frase = input(f"Ingrese la proposición para {letra}: ")
-        oraciones[letra] = frase
-
+    # Ingresar una única oración
+    oracion = input("Ingrese una oración: ")
+    
+    # Separar proposiciones usando " y " y " o "
+    oraciones = procesar_oracion(oracion)
+    
     # Definir las variables simbólicas
     variables = sp.symbols(' '.join(oraciones.keys()))
     
-    # Expresión lógica combinada
-    # Aquí puedes definir una expresión que use todas las variables, por ejemplo:
-    expresion_comb = sp.And(*[sp.Not(var) for var in variables])  # Ejemplo: ¬A ∧ ¬B ∧ ¬C ∧ ...
+    # Expresión lógica combinada (conjunción de las variables)
+    expresion_comb = sp.And(*variables)
 
     # Mostrar las proposiciones y la expresión lógica en la terminal
     print("\nProposiciones:")
@@ -33,10 +28,25 @@ def procesar_expresiones():
     combinaciones, resultados = generar_tabla_verdad(oraciones, expresion_comb)
 
     # Generar y mostrar la tabla de átomos
-    generar_tabla_atomos(oraciones, combinaciones, resultados)
+    generar_tabla_atomos(oraciones)
 
     # Generar árbol de decisiones
     generar_arbol(oraciones, combinaciones, resultados)
+
+def procesar_oracion(oracion):
+    # Separar la oración en proposiciones
+    # Ignorar "es" y tratar "y" y "o" como separadores
+    oracion = oracion.replace("es", "es").strip()
+    proposiciones = []
+    
+    # Separar primero por " y "
+    partes_y = oracion.split(' y ')
+    for parte in partes_y:
+        # Luego separar por " o "
+        proposiciones.extend(parte.split(' o '))
+    
+    # Asignar letras a cada proposición y eliminar espacios en blanco
+    return {chr(65 + i): p.strip() for i, p in enumerate(proposiciones) if p.strip()}
 
 def generar_tabla_verdad(oraciones, expresion):
     variables = list(oraciones.keys())
@@ -49,66 +59,54 @@ def generar_tabla_verdad(oraciones, expresion):
         resultado = expresion.subs(contexto).simplify()
         resultados.append(1 if bool(resultado) else 0)
 
-    # Crear un DataFrame de pandas para la tabla de verdad
-    nombre_formula = str(expresion)
-    tabla_verdad = pd.DataFrame(combinaciones, columns=variables)
-    tabla_verdad = tabla_verdad.replace({True: 1, False: 0})  # Reemplazar True/False por 1/0
-    tabla_verdad[nombre_formula] = resultados
-
-    # Guardar la tabla de verdad como imagen
-    guardar_tabla_como_imagen(tabla_verdad, "tabla_verdad.png")
-    print("Imagen de la tabla de verdad guardada como 'tabla_verdad.png'.")
-
     return combinaciones, resultados
 
-def generar_tabla_atomos(oraciones, combinaciones, resultados):
-    variables = list(oraciones.keys())
-    nombre_formula = str(sp.And(*[sp.Not(sp.symbols(var)) for var in variables]))
-    tabla_atomos = pd.DataFrame(combinaciones, columns=variables)
-    tabla_atomos = tabla_atomos.replace({True: 1, False: 0})  # Reemplazar True/False por 1/0
-    tabla_atomos[nombre_formula] = resultados
-
-    # Guardar la tabla de átomos como imagen
-    guardar_tabla_como_imagen(tabla_atomos, "tabla_atomos.png")
-    print("Imagen de la tabla de átomos guardada como 'tabla_atomos.png'.")
-
-def guardar_tabla_como_imagen(tabla, filename):
-    fig, ax = plt.subplots(figsize=(8, 4))
+def generar_tabla_atomos(oraciones):
+    # Crear la tabla de átomos como imagen
+    atomos = [(f"Átomo {i + 1}", oraciones[letra]) for i, letra in enumerate(oraciones.keys())]
+    
+    # Convertir a DataFrame para mejor visualización
+    df_atom = pd.DataFrame(atomos, columns=["Átomo", "Proposición"])
+    
+    # Crear la figura y la tabla
+    fig, ax = plt.subplots(figsize=(6, len(atomos) * 0.5))
     ax.axis('tight')
     ax.axis('off')
-    table = ax.table(cellText=tabla.values, colLabels=tabla.columns, cellLoc='center', loc='center')
+    table = ax.table(cellText=df_atom.values, colLabels=df_atom.columns, cellLoc='center', loc='center')
     table.auto_set_font_size(False)
-    table.set_fontsize(10)
+    table.set_fontsize(12)
     table.scale(1.2, 1.2)
 
     # Guardar la imagen
-    plt.savefig(filename, bbox_inches='tight')
+    plt.savefig("tabla_atom.png", bbox_inches='tight')
     plt.close(fig)
+    print("Imagen de la tabla de átomos guardada como 'tabla_atom.png'.")
 
 def generar_arbol(oraciones, combinaciones, resultados):
     dot = Digraph()
+    dot.attr(rankdir='TB')  # Cambiar la dirección del gráfico
     nodos = list(oraciones.keys())
 
-    # Crear nodos de decisiones según el número de proposiciones
-    for i, var in enumerate(nodos):
-        dot.node(var, var)
-        if i > 0:  # Conectar a los nodos anteriores
-            for j in range(2):  # 0 y 1
-                dot.edge(nodos[i-1], f"{var}{j}", label=str(j))
+    # Crear un nodo raíz
+    dot.node('Raiz', 'Decisiones')
 
-    # Generar nodos finales según las combinaciones
+    # Generar nodos y conexiones según las combinaciones
     for i, combinacion in enumerate(combinaciones):
-        estado_label = '1' if resultados[i] == 1 else '0'
+        for j, var in enumerate(nodos):
+            # Crear nodo solo con la letra
+            dot.node(f"{var}_{i}", var)  # Nodo con letra
+            if j == 0:
+                dot.edge('Raiz', f"{var}_{i}", label=str(1 if combinacion[j] else 0))  # Etiqueta en la rama
+            else:
+                dot.edge(f"{nodos[j-1]}_{i}", f"{var}_{i}", label=str(1 if combinacion[j] else 0))  # Etiqueta en la rama
+
+        # Colorear el último nodo según el resultado
         estado_color = 'green' if resultados[i] == 1 else 'red'
-        estado_nombre = f"Estado_{i+1}"
-        dot.node(estado_nombre, estado_label, color=estado_color)
-        
-        # Conectar con el nodo correspondiente
-        dot.edge(f"{nodos[-1]}{int(combinacion[-1])}", estado_nombre)
+        dot.node(f"Estado_{i}", str(resultados[i]), color=estado_color)
+        dot.edge(f"{nodos[-1]}_{i}", f"Estado_{i}", label=str(resultados[i]))
 
     dot.render('arbol_decisiones_actualizado', format='png', cleanup=True)
     print("Árbol de decisiones generado y guardado como 'arbol_decisiones_actualizado.png'.")
 
 # Ejemplo de uso
 procesar_expresiones()
-

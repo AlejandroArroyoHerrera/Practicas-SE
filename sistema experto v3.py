@@ -3,12 +3,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from graphviz import Digraph
 import sympy as sp
+import re
 
 def procesar_expresiones():
     # Solicitar la oración al usuario
-    oracion = input("Ingrese la oración lógica: ")
+    oracion = input("Ingrese la oración lógica (use 'y' para AND y 'o' para OR): ")
 
-    # Procesar la oración para extraer proposiciones y conectores
+    # Procesar la oración para extraer proposiciones
     proposiciones, expresion_comb = procesar_oracion(oracion)
 
     # Mostrar las proposiciones y la expresión lógica
@@ -26,29 +27,28 @@ def procesar_expresiones():
     generar_arbol(proposiciones, combinaciones, resultados)
 
 def procesar_oracion(oracion):
-    # Separar proposiciones por "y" y "o"
-    partes = [part.strip() for part in oracion.replace("o", " or ").split("y")]
+    # Usar expresiones regulares para separar proposiciones por 'y' o 'o'
+    partes = re.split(r'\s+(y|o)\s+', oracion)
+
+    # Crear la expresión lógica
     proposiciones = []
     expresion = []
 
     for parte in partes:
-        subpartes = [p.strip() for p in parte.split("or")]
-        subexpresion = []
+        parte = parte.strip()  # Eliminar espacios en blanco
+        if parte:  # Asegurarse de que no esté vacío
+            proposiciones.append(parte)  # Guardar la proposición
+            expresion.append(sp.symbols(parte))  # Crear un símbolo para la proposición
 
-        for subparte in subpartes:
-            if subparte:  # Asegurarse de que no esté vacío
-                proposiciones.append(subparte)
-                subexpresion.append(sp.symbols(subparte))
+    # Construir la expresión lógica
+    expresion_final = expresion[0]
+    for i in range(1, len(partes)):
+        if partes[i] == 'y':
+            expresion_final = sp.And(expresion_final, expresion[i])
+        elif partes[i] == 'o':
+            expresion_final = sp.Or(expresion_final, expresion[i])
 
-        if len(subexpresion) > 1:
-            expresion.append(sp.Or(*subexpresion))
-        elif subexpresion:
-            expresion.append(subexpresion[0])
-
-    # Combinar expresiones AND
-    if expresion:
-        return list(set(proposiciones)), sp.And(*expresion)
-    return [], None
+    return list(set(proposiciones)), expresion_final
 
 def generar_tabla_verdad(proposiciones, expresion):
     variables = list(set(proposiciones))
@@ -64,8 +64,12 @@ def generar_tabla_verdad(proposiciones, expresion):
     # Crear un DataFrame de pandas para la tabla de verdad
     nombre_formula = str(expresion)
     tabla_verdad = pd.DataFrame(combinaciones, columns=variables)
-    tabla_verdad = tabla_verdad.replace({True: 1, False: 0})  # Reemplazar True/False por 1/0
     tabla_verdad[nombre_formula] = resultados
+
+    # Mejorar la presentación de la tabla
+    tabla_verdad = tabla_verdad.replace({True: 1, False: 0})  # Reemplazar True/False por 1/0
+    print("\nTabla de Verdad:")
+    print(tabla_verdad)
 
     # Guardar la tabla de verdad como imagen
     guardar_tabla_como_imagen(tabla_verdad, "tabla_verdad.png")
@@ -77,7 +81,6 @@ def generar_tabla_atomos(proposiciones, combinaciones, resultados):
     variables = list(set(proposiciones))
     nombre_formula = str(sp.And(*[sp.Not(sp.symbols(var)) for var in variables]))
     tabla_atomos = pd.DataFrame(combinaciones, columns=variables)
-    tabla_atomos = tabla_atomos.replace({True: 1, False: 0})  # Reemplazar True/False por 1/0
     tabla_atomos[nombre_formula] = resultados
 
     # Guardar la tabla de átomos como imagen
@@ -85,12 +88,12 @@ def generar_tabla_atomos(proposiciones, combinaciones, resultados):
     print("Imagen de la tabla de átomos guardada como 'tabla_atomos.png'.")
 
 def guardar_tabla_como_imagen(tabla, filename):
-    fig, ax = plt.subplots(figsize=(8, 4))
+    fig, ax = plt.subplots(figsize=(10, 5))  # Cambiar el tamaño para mejor visualización
     ax.axis('tight')
     ax.axis('off')
     table = ax.table(cellText=tabla.values, colLabels=tabla.columns, cellLoc='center', loc='center')
     table.auto_set_font_size(False)
-    table.set_fontsize(10)
+    table.set_fontsize(12)  # Aumentar el tamaño de la fuente
     table.scale(1.2, 1.2)
 
     # Guardar la imagen
@@ -99,14 +102,16 @@ def guardar_tabla_como_imagen(tabla, filename):
 
 def generar_arbol(proposiciones, combinaciones, resultados):
     dot = Digraph()
+    dot.attr(rankdir='TB')  # Cambiar la dirección del gráfico
     nodos = list(set(proposiciones))
 
+    # Crear un nodo raíz
+    dot.node('Raiz', 'Decisiones')
+
     # Crear nodos de decisiones según el número de proposiciones
-    for i, var in enumerate(nodos):
+    for var in nodos:
         dot.node(var, var)
-        if i > 0:  # Conectar a los nodos anteriores
-            for j in range(2):  # 0 y 1
-                dot.edge(nodos[i-1], f"{var}{j}", label=str(j))
+        dot.edge('Raiz', var)  # Conectar todos a la raíz
 
     # Generar nodos finales según las combinaciones
     for i, combinacion in enumerate(combinaciones):
@@ -115,8 +120,8 @@ def generar_arbol(proposiciones, combinaciones, resultados):
         estado_nombre = f"Estado_{i+1}"
         dot.node(estado_nombre, estado_label, color=estado_color)
         
-        # Conectar con el nodo correspondiente
-        dot.edge(f"{nodos[-1]}{int(combinacion[-1])}", estado_nombre)
+        # Conectar con la raíz para mantener el árbol conectado
+        dot.edge('Raiz', estado_nombre, label=str(combinacion))
 
     dot.render('arbol_decisiones_actualizado', format='png', cleanup=True)
     print("Árbol de decisiones generado y guardado como 'arbol_decisiones_actualizado.png'.")
