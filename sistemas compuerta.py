@@ -11,9 +11,6 @@ def procesar_expresiones():
     # Procesar la oración para obtener proposiciones y la expresión lógica
     oraciones, expresion_comb = procesar_oracion(oracion)
     
-    # Definir las variables simbólicas
-    variables = sp.symbols(' '.join(oraciones.keys()))
-    
     # Mostrar las proposiciones y la expresión lógica en la terminal
     print("\nProposiciones:")
     for letra, frase in oraciones.items():
@@ -41,16 +38,24 @@ def procesar_oracion(oracion):
         sub_partes = parte.split(' o ')
         proposiciones.extend(sub_partes)
     
-    # Asignar letras a cada proposición y eliminar espacios en blanco
-    proposiciones = [p.strip() for p in proposiciones if p.strip()]
-    oraciones = {chr(65 + i): p for i, p in enumerate(proposiciones)}
+    # Eliminar espacios en blanco y duplicados
+    proposiciones = list(set(p.strip() for p in proposiciones if p.strip()))
+
+    # Crear un diccionario para las oraciones y sus negaciones
+    oraciones = {}
+    for i, p in enumerate(proposiciones):
+        # Verificar si hay una negación
+        negacion = 'no' in p
+        frase = p.replace("no", "no").strip()  # Eliminar "no" para la proposición
+        letra = chr(65 + i)  # Asignar letras A, B, C, etc.
+        
+        if negacion:
+            oraciones[letra] = f"{frase}"  # Notación lógica
+        else:
+            oraciones[letra] = frase
     
     # Crear la expresión lógica combinada
-    expresion_comb = sp.Or(*[sp.symbols(chr(65 + i)) for i in range(len(proposiciones))]) if len(proposiciones) > 1 else sp.symbols('A')
-    
-    # Conectar 'y' como conjunción
-    if ' y ' in oracion:
-        expresion_comb = sp.And(*[sp.symbols(chr(65 + i)) for i in range(len(proposiciones))])
+    expresion_comb = sp.Or(*[sp.symbols(chr(65 + i)) for i in range(len(proposiciones))])
     
     return oraciones, expresion_comb
 
