@@ -7,10 +7,10 @@ import sympy as sp
 def procesar_expresiones():
     # Solicitar la oración al usuario
     oracion = input("Ingrese la oración lógica: ")
-    
+
     # Procesar la oración para extraer proposiciones y conectores
     proposiciones, expresion_comb = procesar_oracion(oracion)
-    
+
     # Mostrar las proposiciones y la expresión lógica
     print("\nProposiciones:", proposiciones)
     print("\nFórmula combinada:", expresion_comb)
@@ -30,19 +30,25 @@ def procesar_oracion(oracion):
     partes = [part.strip() for part in oracion.replace("o", " or ").split("y")]
     proposiciones = []
     expresion = []
-    
+
     for parte in partes:
         subpartes = [p.strip() for p in parte.split("or")]
-        proposiciones.extend(subpartes)
-        if len(subpartes) > 1:
-            expresion.append(sp.Or(*[sp.symbols(p) for p in subpartes]))
-        else:
-            expresion.append(sp.symbols(subpartes[0]))
+        subexpresion = []
+
+        for subparte in subpartes:
+            if subparte:  # Asegurarse de que no esté vacío
+                proposiciones.append(subparte)
+                subexpresion.append(sp.symbols(subparte))
+
+        if len(subexpresion) > 1:
+            expresion.append(sp.Or(*subexpresion))
+        elif subexpresion:
+            expresion.append(subexpresion[0])
 
     # Combinar expresiones AND
     if expresion:
-        return proposiciones, sp.And(*expresion)
-    return proposiciones, None
+        return list(set(proposiciones)), sp.And(*expresion)
+    return [], None
 
 def generar_tabla_verdad(proposiciones, expresion):
     variables = list(set(proposiciones))
@@ -117,3 +123,4 @@ def generar_arbol(proposiciones, combinaciones, resultados):
 
 # Ejemplo de uso
 procesar_expresiones()
+
