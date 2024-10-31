@@ -32,7 +32,7 @@ def procesar_expresiones():
 
 def procesar_oracion(oracion):
     # Separar la oración en proposiciones
-    oracion = oracion.replace("es", "").strip()
+    oracion = oracion.replace("es", "es").strip()
     proposiciones = []
     
     # Separar primero por " y " y " o "
