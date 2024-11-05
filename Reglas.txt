@@ -1,0 +1,20 @@
+1.El Sol es una estrella.
+2.La Tierra orbita alrededor del Sol.
+3.Júpiter es el planeta más grande del sistema solar.
+4.La Luna es el satélite natural de la Tierra.
+5.La Vía Láctea es una galaxia espiral.
+6.Plutón fue considerado un planeta en el pasado.
+7.Venus es el planeta más parecido a la Tierra en términos de tamaño.
+8.Saturno tiene anillos.
+9.Marte tiene dos lunas: Fobos y Deimos.
+10.Urano tiene un eje de rotación inclinado.
+11.Neptuno es el planeta más alejado del Sol.
+12 La luz tarda 8 minutos y 20 segundos en llegar del Sol a la Tierra.
+13.El sistema solar tiene 8 planetas.
+14.La atmósfera de Venus está compuesta principalmente de dióxido de carbono.
+15.El cometa Halley pasa cerca de la Tierra aproximadamente cada 76 años.
+16.El asteroide más grande del sistema solar es Ceres.
+17.Un agujero negro tiene una gravedad tan fuerte que nada puede escapar de él.
+18.La Tierra tiene una atmósfera que permite la vida.
+19.Las estrellas se forman en nebulosas.
+20.La gravedad es la fuerza que mantiene a los planetas en sus órbitas.
