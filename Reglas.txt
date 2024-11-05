@@ -1,20 +1,20 @@
-1.El Sol es una estrella.
-2.La Tierra orbita alrededor del Sol.
-3.Júpiter es el planeta más grande del sistema solar.
-4.La Luna es el satélite natural de la Tierra.
-5.La Vía Láctea es una galaxia espiral.
-6.Plutón fue considerado un planeta en el pasado.
-7.Venus es el planeta más parecido a la Tierra en términos de tamaño.
-8.Saturno tiene anillos.
-9.Marte tiene dos lunas: Fobos y Deimos.
-10.Urano tiene un eje de rotación inclinado.
-11.Neptuno es el planeta más alejado del Sol.
-12 La luz tarda 8 minutos y 20 segundos en llegar del Sol a la Tierra.
-13.El sistema solar tiene 8 planetas.
-14.La atmósfera de Venus está compuesta principalmente de dióxido de carbono.
-15.El cometa Halley pasa cerca de la Tierra aproximadamente cada 76 años.
-16.El asteroide más grande del sistema solar es Ceres.
-17.Un agujero negro tiene una gravedad tan fuerte que nada puede escapar de él.
-18.La Tierra tiene una atmósfera que permite la vida.
-19.Las estrellas se forman en nebulosas.
-20.La gravedad es la fuerza que mantiene a los planetas en sus órbitas.
+1.Un objeto es una estrella si emite su propia luz.
+2.Un objeto es un planeta si orbita alrededor de una estrella.
+3.Un objeto es un satélite si orbita alrededor de un planeta.
+4.Una galaxia es un conjunto enorme de estrellas.
+5.Una nebulosa es una nube de gas y polvo en el espacio.
+6.Un planeta es un gigante gaseoso si no tiene una superficie sólida.
+7.Un planeta es rocoso si tiene una superficie sólida.
+8.Una supernova es una estrella que ha explotado.
+9.Un agujero negro es un objeto con una gravedad tan fuerte que nada, ni siquiera la luz, puede escapar.
+10.Un quásar es un núcleo galáctico muy activo que emite una gran cantidad de energía.
+11.Un planeta orbita alrededor de una estrella siguiendo una trayectoria elíptica.
+12.Se produce una colisión cuando dos objetos celestes chocan en el mismo lugar y al 14.mismo tiempo.
+13.Una estrella se forma a partir del colapso gravitacional de una nebulosa.
+14.El universo se está expandiendo.
+15.Un agujero negro atrae materia y hace que se contraiga.
+16.Un exoplaneta es un planeta que orbita alrededor de una estrella fuera de nuestro sistema solar.
+17.La materia oscura es una sustancia que no emite luz pero que ejerce una fuerza gravitatoria.
+18.La energía oscura es una fuerza misteriosa que acelera la expansión del universo.
+19.La Vía Láctea es la galaxia donde se encuentra nuestro sistema solar.
+20.Andrómeda es una galaxia cercana a la Vía Láctea.
