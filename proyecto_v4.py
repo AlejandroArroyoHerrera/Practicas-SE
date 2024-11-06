@@ -361,7 +361,7 @@ while True:
     elif opcion == "10":
         Horn()
     elif opcion == "11":
-        print("Adios")
+        print("gracias por utilizarme...")
         break
     else:
         print("Opción inválida. Por favor, elija una opción válida.")
